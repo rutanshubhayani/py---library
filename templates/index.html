@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Welcome to Library Management System</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Books</h5>
+                        <p class="card-text">Manage your library's book collection, add new books, and track inventory.</p>
+                        <a href="{{ url_for('books') }}" class="btn btn-primary">View Books</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Members</h5>
+                        <p class="card-text">Handle library memberships, view member details, and manage accounts.</p>
+                        <a href="{{ url_for('members') }}" class="btn btn-primary">View Members</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Transactions</h5>
+                        <p class="card-text">Track book borrowings, returns, and manage library transactions.</p>
+                        <a href="{{ url_for('transactions') }}" class="btn btn-primary">View Transactions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

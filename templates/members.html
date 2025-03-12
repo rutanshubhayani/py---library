@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Members - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Members Management</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                Add New Member
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('members') }}" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="search" placeholder="Search members..." value="{{ request.args.get('search', '') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Members Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Member ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in members %}
+                            <tr>
+                                <td>{{ member.member_id }}</td>
+                                <td>{{ member.name }}</td>
+                                <td>{{ member.email }}</td>
+                                <td>{{ member.phone }}</td>
+                                <td>
+                                    <span class="badge {% if member.status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ member.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editMemberModal{{ member.id }}">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteMemberModal{{ member.id }}">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_member') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

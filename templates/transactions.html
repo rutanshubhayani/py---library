@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Transactions Management</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                New Transaction
+            </button>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('transactions') }}" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="search" placeholder="Search by member or book..." value="{{ request.args.get('search', '') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="type">
+                            <option value="">All Types</option>
+                            <option value="borrow" {% if request.args.get('type') == 'borrow' %}selected{% endif %}>Borrow</option>
+                            <option value="return" {% if request.args.get('type') == 'return' %}selected{% endif %}>Return</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="status">
+                            <option value="">All Status</option>
+                            <option value="active" {% if request.args.get('status') == 'active' %}selected{% endif %}>Active</option>
+                            <option value="completed" {% if request.args.get('status') == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="overdue" {% if request.args.get('status') == 'overdue' %}selected{% endif %}>Overdue</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Member</th>
+                                <th>Book</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.transaction_id }}</td>
+                                <td>{{ transaction.member.name }}</td>
+                                <td>{{ transaction.book.title }}</td>
+                                <td>{{ transaction.issue_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ transaction.due_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if transaction.status == 'Active' %}bg-primary
+                                        {% elif transaction.status == 'Completed' %}bg-success
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ transaction.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if transaction.status == 'Active' %}
+                                    <form method="POST" action="{{ url_for('return_book', transaction_id=transaction.id) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-success">Return</button>
+                                    </form>
+                                    {% endif %}
+                                    <a href="{{ url_for('view_transaction', transaction_id=transaction.id) }}" class="btn btn-sm btn-info">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_transaction') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="member_id" class="form-label">Member</label>
+                        <select class="form-select" id="member_id" name="member_id" required>
+                            <option value="">Select Member</option>
+                            {% for member in members %}
+                            <option value="{{ member.id }}">{{ member.name }} (ID: {{ member.member_id }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="book_id" class="form-label">Book</label>
+                        <select class="form-select" id="book_id" name="book_id" required>
+                            <option value="">Select Book</option>
+                            {% for book in available_books %}
+                            <option value="{{ book.id }}">{{ book.title }} (ISBN: {{ book.isbn }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="due_date" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="due_date" name="due_date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

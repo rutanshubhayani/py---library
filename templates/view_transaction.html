@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction Details - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Transaction Details</h1>
+            <a href="{{ url_for('transactions') }}" class="btn btn-secondary">Back to Transactions</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Transaction Information</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Transaction ID:</th>
+                                <td>{{ transaction.transaction_id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <td>
+                                    <span class="badge 
+                                        {% if transaction.status == 'Active' %}bg-primary
+                                        {% elif transaction.status == 'Completed' %}bg-success
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ transaction.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Issue Date:</th>
+                                <td>{{ transaction.issue_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Due Date:</th>
+                                <td>{{ transaction.due_date.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% if transaction.return_date %}
+                            <tr>
+                                <th>Return Date:</th>
+                                <td>{{ transaction.return_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Book Information</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Title:</th>
+                                <td>{{ transaction.book.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>Author:</th>
+                                <td>{{ transaction.book.author }}</td>
+                            </tr>
+                            <tr>
+                                <th>ISBN:</th>
+                                <td>{{ transaction.book.isbn }}</td>
+                            </tr>
+                            <tr>
+                                <th>Category:</th>
+                                <td>{{ transaction.book.category }}</td>
+                            </tr>
+                        </table>
+
+                        <h4 class="mt-4">Member Information</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Member ID:</th>
+                                <td>{{ transaction.member.member_id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Name:</th>
+                                <td>{{ transaction.member.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ transaction.member.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>{{ transaction.member.phone }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                {% if transaction.status == 'Active' %}
+                <div class="text-center mt-4">
+                    <form method="POST" action="{{ url_for('return_book', transaction_id=transaction.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Return Book</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

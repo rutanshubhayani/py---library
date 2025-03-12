@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Models
+# Models 123
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     isbn = db.Column(db.String(13), unique=True, nullable=False)
